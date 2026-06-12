@@ -1,28 +1,7 @@
-"""
-Asian Range Liquidity Sweep Backtest
-=====================================
-
-Tests the strategy:
-  - Mark the Asian session high/low (00:00-07:00 London)
-  - During the London window, wait for price to SWEEP that high or low (wick takes the level)
-  - Enter when a candle CLOSES back inside the range, against the sweep direction
-  - Stop a few pips beyond the sweep wick
-  - Target the opposite side of the Asian range
-  - Risk a fixed % per trade
-
-Toggle each filter in the CONFIG block and re-run to watch expectancy change.
-
-INPUT: a 5-minute EUR/USD (or GBP/USD) CSV with columns: datetime, open, high, low, close
-       datetime should be parseable (e.g. 2024-01-02 07:05:00). UTC or London tz both fine,
-       just set TIMEZONE_IS_LONDON correctly below.
-"""
-
 import pandas as pd
 import numpy as np
 
-# ----------------------------------------------------------------------
 # CONFIG  -- this is the part you experiment with
-# ----------------------------------------------------------------------
 CONFIG = {
     "csv_path": "data.csv",          # <-- point this at your file
     "timezone_is_london": True,      # set False if your timestamps are UTC
@@ -51,7 +30,6 @@ CONFIG = {
     "one_trade_per_day": True,       # take only the first valid setup each day
 }
 
-
 def load_data(cfg):
     df = pd.read_csv(cfg["csv_path"])
     df.columns = [c.strip().lower() for c in df.columns]
@@ -70,12 +48,9 @@ def load_data(cfg):
         df[c] = df[c].astype(float)
     return df
 
-
 def daily_closes(df):
-    """Last close of each day, for the HTF bias filter."""
     d = df.groupby("date")["close"].last()
     return d
-
 
 def backtest(cfg):
     df = load_data(cfg)
@@ -204,7 +179,6 @@ def backtest(cfg):
 
     return pd.DataFrame(trades), equity
 
-
 def report(trades, final_equity, cfg):
     if trades.empty:
         print("No trades triggered. Loosen filters or check your data/timezone.")
@@ -242,7 +216,6 @@ def report(trades, final_equity, cfg):
     print("=" * 50)
     print("\nRead expectancy first. Positive = edge, negative = bleed.")
     print("Flip one filter at a time in CONFIG and re-run to see what earns its place.")
-
 
 if __name__ == "__main__":
     trades, final_equity = backtest(CONFIG)
