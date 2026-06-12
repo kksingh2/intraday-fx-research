@@ -1,25 +1,20 @@
-# Intraday FX research
+# intraday fx research
 
-Backtesting an Asian-session liquidity-sweep strategy on EUR/USD 5-minute data, with ~150 variants tried across the four `research*.py` scripts.
+backtesting a simple intraday strategy on eur/usd 5 minute data.
 
-## The base strategy
+## the strategy
 
-1. Mark the Asian session high and low (00:00-07:00 London)
-2. Wait for price to sweep one of those levels during the London window (wick takes the level)
-3. Enter when a candle closes back inside the range, against the sweep direction
-4. Stop a few pips beyond the sweep wick
-5. Target the opposite side of the Asian range
-6. Risk a fixed percent per trade
+1. mark the high and low of the asian session (00:00 to 07:00 london)
+2. during the london session, wait for price to spike through one of those levels (wick takes the level)
+3. when a candle closes back inside the range, enter a trade in the other direction
+4. stop a few pips beyond the wick, target the opposite side of the asian range
 
-## What I found
+i tried a bunch of small variations (different sessions, different stop sizes, different filters) across the four research scripts.
 
-No edge after costs. The raw signal had a small positive expectancy in-sample, but it disappeared once spread (0.6 pip) and slippage were modelled honestly. Filters that helped in-sample mostly failed out-of-sample. Logged here as a real "things I tried that didn't work" record.
+## what i found
 
-## Files
+no edge once spread (0.6 pip) and slippage are included. the raw signal looked ok in sample but the in sample edge didnt hold out of sample. logged it as a thing i tried that didnt work.
 
-- `asian_sweep_backtest.py` - the cleanest single-file backtest, with a CONFIG block to toggle filters
-- `research.py` to `research4.py` - exploratory variants (sessions, holding times, re-entry rules, day-of-week filters)
+## run
 
-## Running
-
-You'll need your own EUR/USD 5-minute bid CSV with columns `datetime, open, high, low, close`. Drop it in the repo root as `eurusd_5m_london.csv` and run any script with Python 3.10+.
+put a eur/usd 5 minute csv with columns `datetime, open, high, low, close` in the folder and run any of the python files.
