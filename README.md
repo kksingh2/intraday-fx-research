@@ -1,26 +1,29 @@
-# intraday fx research
+# Intraday FX Research
 
-backtesting one specific eur/usd trading idea on 5-minute price data.
+Backtesting one specific trading idea on the euro/dollar exchange rate, using 5-minute price data. The honest result is the point of the project.
 
-## the idea
+## The idea
 
-during the asian hours (overnight in london) the price usually stays in a small range. mark the high and low of that range.
+During the Asian hours (overnight in London) the price usually stays in a small range. The strategy marks the high and low of that range, then watches the London morning session:
 
-then in the morning london session, watch for the price to spike just above that high or below that low. if it spikes through and then a candle closes back inside the range, take a trade in the opposite direction. the thinking is that the spike was "fake" - big players took out the obvious stops above the range, and the price is going back where it was.
+1. Wait for the price to spike just past the Asian high or low. The thinking is that big traders push it there to trigger other people's stop orders.
+2. When a candle closes back inside the range, take a trade in the opposite direction, betting the spike was a fake-out.
+3. Stop loss goes a few pips beyond the spike. Target is the opposite side of the Asian range.
 
-- stop loss: a few pips beyond the wick of the spike
-- take profit: the opposite side of the asian range
+## What I tried
 
-## what i tried
+I ran about 150 small variations across the four `research` scripts: different session hours, different stop sizes, day-of-week filters, and time-of-day filters.
 
-i ran about 150 small variations across the four research scripts (different session hours, different stop sizes, day-of-week filters, time-of-day filters, etc).
+## What I found
 
-## what i found
+In the raw price data it looked profitable. But once I added the spread (the small fee paid on every trade, about 0.6 pips for euro/dollar), the edge disappeared. An idea that looks good before costs but not after is not a real edge.
 
-in the raw price data it looked profitable. but once i added the spread the broker charges (0.6 pips, which is normal for eur/usd), the edge basically disappeared.
+I am keeping the code here so I remember not to chase the same idea again without modelling costs honestly.
 
-saving the code here so i remember next time not to chase the same idea without honest cost modelling.
+## How the code works
 
-## run
+Each script loads the price data with pandas, groups it by day, finds the Asian high and low, then steps through the London candles looking for the sweep-and-reverse pattern. It records every trade and adds up the profit, with a switch to include or exclude the spread.
 
-drop your own eur/usd 5 minute csv with columns `datetime, open, high, low, close` into the folder and run any of the python files.
+## Run it
+
+Put a euro/dollar 5-minute CSV with columns `datetime, open, high, low, close` in the folder, then run any of the Python files.
